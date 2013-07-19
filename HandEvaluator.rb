@@ -9,6 +9,7 @@ class HandEvaluator
  
   def evaluate_hand(hand)
     @new_hand = hand
+    @hand_value = 0
     if(hand_has_royal_flush?(hand))
     elsif(hand_has_straight_flush?(hand))
     elsif(hand_has_four_of_a_kind?(hand))
@@ -61,29 +62,11 @@ class HandEvaluator
   end
   
   def evaluate_high_card(hand)
-    
-    #Find high card
-    high_card = hand[0]
-    hand.each do |c|
-      high_card = (c.get_compare_value > high_card.get_compare_value) ? c : high_card
+    #Sort hand by compare value then reverse
+    @new_hand = (hand.sort_by {|c| c.get_compare_value}).reverse
+    #Calculate hand value by best 5 cards
+    for i in 0...5
+      @hand_value += @new_hand[i].get_compare_value
     end
-    
-    #Find kicker
-    kicker = hand[1]
-    hand.each do |c|
-      challenger_value = c.get_compare_value
-      better_than_kicker = challenger_value > kicker.get_compare_value
-      less_than_high_card = challenger_value < high_card.get_compare_value
-      kicker = (better_than_kicker && less_than_high_card) ? c : kicker
-    end
-    
-    #Position high card in front and kicker second
-    hand.delete(high_card)
-    hand.delete(kicker)
-    @new_hand = hand.insert(0, high_card)
-    @new_hand.insert(1, kicker)
-    
-    #Set the hand value
-    @hand_value = high_card.get_compare_value + kicker.get_compare_value
   end
 end
