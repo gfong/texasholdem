@@ -79,8 +79,8 @@ class HandEvaluator
     
     #Position high card in front and kicker second
     hand.delete(high_card)
+    hand.delete(kicker)
     @new_hand = hand.insert(0, high_card)
-    @new_hand.delete(kicker)
     @new_hand.insert(1, kicker)
     
     #Set the hand value

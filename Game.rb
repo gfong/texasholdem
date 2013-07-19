@@ -62,6 +62,7 @@ class Game
     @community_cards.each do |c|
       print c.inspect + " "
     end
+    puts
     
     #Evaluate each hand's value
     puts
@@ -69,16 +70,23 @@ class Game
     @players.each do |p|
       hand = p + @community_cards
       hand_and_value = @hand_evaluator.evaluate_hand(hand)
+      @player_hands_and_values[hand_and_value[0]] = hand_and_value[1]
       hand_and_value[0].each do |c|
         print c.inspect + ", "
       end
-      print " value: " + hand_and_value[1].to_s
-      puts
+      print "\t value: " + hand_and_value[1].to_s + "\n"
     end
+    puts
     
     #Evaluate best hand and display placement
     puts "Evaluating best hand and displaying placement..."
-    
-    
+    sorted = @player_hands_and_values.sort {|k, v| k[1] <=> v[1]}
+    sorted.reverse!
+    sorted.each do |k, v|
+      k.each do |c|
+        print c.inspect + ", "
+      end
+      print "\t value: " + v.to_s + "\n"
+    end
   end
 end
