@@ -14,12 +14,15 @@ class Card
   end
   
   def get_compare_value
-    return @value * @suit
+    converted_value = @value == 0 ? 14 : @value
+    return ((converted_value + 1) * 10) + (@suit + 1)
   end
   
   def inspect
     valueChar = @value + 1 
-    if valueChar == 11
+    if valueChar == 1
+      valueChar = "A"
+    elsif valueChar == 11
       valueChar = "J"
     elsif valueChar == 12
       valueChar = "Q"

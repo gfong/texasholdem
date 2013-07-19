@@ -1,5 +1,6 @@
 require_relative 'Deck'
 require_relative 'Card'
+require_relative 'HandEvaluator'
 
 class Game
   
@@ -9,6 +10,8 @@ class Game
     @burned_cards = Array.new
     @players = Array.new
     @player_count = 5
+    @player_hands_and_values = Hash.new
+    @hand_evaluator = HandEvaluator.new
   end
   
   def start
@@ -60,8 +63,22 @@ class Game
       print c.inspect + " "
     end
     
-    #Evaluate best hand and display placement
+    #Evaluate each hand's value
     puts
+    puts "Evaluating each hand's value..."
+    @players.each do |p|
+      hand = p + @community_cards
+      hand_and_value = @hand_evaluator.evaluate_hand(hand)
+      hand_and_value[0].each do |c|
+        print c.inspect + ", "
+      end
+      print " value: " + hand_and_value[1].to_s
+      puts
+    end
+    
+    #Evaluate best hand and display placement
     puts "Evaluating best hand and displaying placement..."
+    
+    
   end
 end
