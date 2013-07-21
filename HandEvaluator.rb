@@ -2,6 +2,17 @@ require_relative 'Card'
 
 class HandEvaluator
   
+  COMBO_VALUE_MULTIPLIER = 75
+  PAIR_VALUE = 2000
+  THREE_OF_A_KIND_VALUE = 6000
+  STRAIGHT_VALUE = 8000
+  FLUSH_VALUE = 10000
+  #Full house value = three of a kind value + pair value + modifier
+  FULL_HOUSE_MODIFIER = 3000
+  FOUR_OF_A_KIND_VALUE = 15000
+  STRAIGHT_FLUSH_VALUE = 30000
+  ROYAL_FLUSH_VALUE = 50000
+  
   def initialize()
     @new_hand = nil
     @hand_value = 0
@@ -18,10 +29,10 @@ class HandEvaluator
     elsif(hand_has_flush?(hand))
     elsif(hand_has_straight?(hand))
     elsif(hand_has_three_of_a_kind?(hand))
+      reorganize_hand(hand)
     elsif(hand_has_pairs?(hand))
       reorganize_hand(hand)
     else
-      puts "Evaluating high card."
       evaluate_high_card(hand)
     end
     return [@new_hand, @hand_value]
@@ -52,7 +63,34 @@ class HandEvaluator
   end
   
   def hand_has_three_of_a_kind?(hand)
-    return false
+    has = false
+    
+    #Used to hold pairs in this case
+    @temp_array = Array.new 
+    
+    #Get all three of a kinds from hand
+    hand = (hand.sort_by {|c| c.get_compare_value}).reverse
+    current = hand[0]
+    match_counter = 1
+    for i in 1...hand.length
+      if(current.get_value == hand[i].get_value)
+        #puts "Match! " + current.inspect + " " + hand[i].inspect
+        match_counter += 1
+        if(match_counter == 3)
+          has = true
+          @temp_array << hand[i]
+          @temp_array << hand[i-1]
+          @temp_array << hand[i-2]
+          #print "Three of a kind! " + @temp_array.to_s
+          @hand_value += THREE_OF_A_KIND_VALUE + COMBO_VALUE_MULTIPLIER * (hand[i].get_value)
+          break
+        end
+      else
+        match_counter = 1
+        current = hand[i]     
+      end
+    end
+    return has
   end
   
   def hand_has_pairs?(hand)
@@ -64,13 +102,13 @@ class HandEvaluator
     #Get all pairs from hand
     for i in 0...(hand.length - 1)
       for j in (i + 1)...hand.length
-        if(@temp_array.length <= 4 && 
+        if(@temp_array.length < 4 && 
             (!@temp_array.include? hand[i]) && (!@temp_array.include? hand[j]) && 
             hand[i].get_value == hand[j].get_value)
           has = true
           @temp_array << hand[i]
           @temp_array << hand[j]
-          @hand_value += 1000 + 150 * (hand[i].get_value)
+          @hand_value += PAIR_VALUE + COMBO_VALUE_MULTIPLIER * (hand[i].get_value)
         end 
       end
     end
@@ -86,7 +124,8 @@ class HandEvaluator
   def calculate_hand_value(hand, selected_card_count)
     #Calculate hand value by selected number of cards
     for i in 0...selected_card_count
-      @hand_value += hand[i].get_compare_value
+      #Values higher in the list are worth more
+      @hand_value += hand[i].get_compare_value * 2 ** (selected_card_count - i) / 8
     end
   end
   

@@ -6,7 +6,8 @@ class Card
   end
   
   def get_value
-    return @value
+    converted_value = @value == 0 ? 14 : @value
+    return converted_value
   end
   
   def get_suit

@@ -6,15 +6,20 @@ class Game
   
   def initialize()
     @deck = nil
+    @player_count = 5
+    reset
+  end
+  
+  def reset
     @community_cards = Array.new
     @burned_cards = Array.new
     @players = Array.new
-    @player_count = 5
     @player_hands_and_values = Hash.new
     @hand_evaluator = HandEvaluator.new
   end
   
   def start
+    reset
     puts "Game starting..."
     
     #Create a new deck and shuffle it
@@ -23,32 +28,7 @@ class Game
     @deck.generate
     @deck.shuffle
     
-    #Create player hands and add first card to each hand
-    puts "Creating players and adding first cards..."
-    for i in 0...@player_count
-      @players[i] = Array.new
-      @players[i] << @deck.draw
-    end
-    
-    #Add second card to each hand
-    puts "Adding second cards..."
-    for i in 0...@player_count
-      @players[i] << @deck.draw
-    end
-  
-    #Burn a card then draw first three community cards
-    puts "Burning card and drawing first three community cards..."
-    @burned_cards << @deck.draw
-    for i in 0...3
-      @community_cards << @deck.draw
-    end
-    
-    #Burn a card then draw a community card, then repeat
-    puts "Burning a card and drawing next community card... Then repeat..."
-    for i in 0...2
-      @burned_cards << @deck.draw
-      @community_cards << @deck.draw
-    end
+    setup_standard_game
     
     #Show each player's hand
     puts "Displaying each player's hand..."
@@ -88,5 +68,51 @@ class Game
       end
       print "\t value: " + v.to_s + "\n"
     end
+  end
+  
+  def setup_standard_game
+    #Create player hands and add first card to each hand
+    puts "Creating players and adding first cards..."
+    for i in 0...@player_count
+      @players[i] = Array.new
+      @players[i] << @deck.draw
+    end
+    
+    #Add second card to each hand
+    puts "Adding second cards..."
+    for i in 0...@player_count
+      @players[i] << @deck.draw
+    end
+  
+    #Burn a card then draw first three community cards
+    puts "Burning card and drawing first three community cards..."
+    @burned_cards << @deck.draw
+    for i in 0...3
+      @community_cards << @deck.draw
+    end
+    
+    #Burn a card then draw a community card, then repeat
+    puts "Burning a card and drawing next community card... Then repeat..."
+    for i in 0...2
+      @burned_cards << @deck.draw
+      @community_cards << @deck.draw
+    end
+  end
+  
+  def setup_custom_game
+    for i in 0...@player_count
+      @players[i] = Array.new
+      @players[i] << @deck.draw
+    end
+    
+    for i in 0...@player_count
+      @players[i] << @deck.draw
+    end
+    
+    @community_cards << Card.new(3, 0)
+    @community_cards << Card.new(3, 1)
+    @community_cards << Card.new(1, 2)
+    @community_cards << Card.new(0, 2)
+    @community_cards << Card.new(1, 3)
   end
 end
