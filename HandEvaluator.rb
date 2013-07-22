@@ -57,14 +57,7 @@ class HandEvaluator
   end
   
   def hand_has_pair?(hand)
-    pairs = Array.new
-    returnValue = false
-    hand.permutation(2).to_a.each {|x| 
-      if (x[0].get_value == x[1].get_value)then returnValue = true
-        pairs.push([x[0], x[1]])
-      end}
-      puts pairs.inspect
-    return returnValue
+    return false
   end
   
   def evaluate_high_card(hand)
