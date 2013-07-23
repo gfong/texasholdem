@@ -23,12 +23,17 @@ class HandEvaluator
     @new_hand = hand
     @hand_value = 0
     if(hand_has_royal_flush?(hand))
+      reorganize_hand(hand)
     elsif(hand_has_straight_flush?(hand))
+      reorganize_hand(hand)
     elsif(hand_has_four_of_a_kind?(hand))
       reorganize_hand(hand)
     elsif(hand_has_full_house?(hand))
+      reorganize_hand(hand)
     elsif(hand_has_flush?(hand))
+      reorganize_hand(hand)
     elsif(hand_has_straight?(hand))
+      reorganize_hand(hand)
     elsif(hand_has_three_of_a_kind?(hand))
       reorganize_hand(hand)
     elsif(hand_has_pairs?(hand))
@@ -89,7 +94,11 @@ class HandEvaluator
   end
   
   def hand_has_straight?(hand)
-    return false
+    has=false
+    @temp_numbers = Array.new
+    hand.each{|x|@temp_numbers.push(x.get_value)}
+    @temp_numbers.each{|x|print x}
+    return has
   end
   
   def hand_has_three_of_a_kind?(hand)
