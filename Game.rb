@@ -29,6 +29,7 @@ class Game
     @deck.shuffle
     
     setup_standard_game
+    #setup_custom_game
     
     #Show each player's hand
     puts "Displaying each player's hand..."
@@ -111,8 +112,8 @@ class Game
     
     @community_cards << Card.new(3, 0)
     @community_cards << Card.new(3, 1)
-    @community_cards << Card.new(1, 2)
-    @community_cards << Card.new(0, 2)
+    @community_cards << Card.new(3, 2)
+    @community_cards << Card.new(3, 3)
     @community_cards << Card.new(1, 3)
   end
 end

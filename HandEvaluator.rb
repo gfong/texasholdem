@@ -25,6 +25,7 @@ class HandEvaluator
     if(hand_has_royal_flush?(hand))
     elsif(hand_has_straight_flush?(hand))
     elsif(hand_has_four_of_a_kind?(hand))
+      reorganize_hand(hand)
     elsif(hand_has_full_house?(hand))
     elsif(hand_has_flush?(hand))
     elsif(hand_has_straight?(hand))
@@ -47,10 +48,39 @@ class HandEvaluator
   end
   
   def hand_has_four_of_a_kind?(hand)
-    return false
+    has = false
+    
+    #Used to hold pairs in this case
+    @temp_array = Array.new 
+    
+    #Get all three of a kinds from hand
+    hand = (hand.sort_by {|c| c.get_compare_value}).reverse
+    current = hand[0]
+    match_counter = 1
+    for i in 1...hand.length
+      if(current.get_value == hand[i].get_value)
+        #puts "Match! " + current.inspect + " " + hand[i].inspect
+        match_counter += 1
+        if(match_counter == 4)
+          has = true
+          @temp_array << hand[i]
+          @temp_array << hand[i-1]
+          @temp_array << hand[i-2]
+          @temp_array << hand[i-3]
+          #print "Three of a kind! " + @temp_array.to_s
+          @hand_value += FOUR_OF_A_KIND_VALUE + COMBO_VALUE_MULTIPLIER * (hand[i].get_value)
+          break
+        end
+      else
+        match_counter = 1
+        current = hand[i]     
+      end
+    end
+    return has
   end
   
   def hand_has_full_house?(hand)
+    #has = hand_has_three_of_a_kind? hand && hand_has_pairs?(@new_hand)
     return false
   end
   
