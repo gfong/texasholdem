@@ -66,9 +66,27 @@ class HandEvaluator
   
   def hand_has_straight?(hand)
     has=false
-    @temp_numbers = Array.new
-    hand.each{|x|@temp_numbers.push(x.get_value)}
-    @temp_numbers.each{|x|print x}
+    tp = Array.new
+    hand.each{|x|tp.push(x.get_value)}
+    tp.sort!
+    tp.uniq!
+    puts tp.inspect
+    
+       
+    if(tp.include?(13) && tp.include?(1) && tp.include?(2) && tp.include?(3) && tp.include?(4) ||
+      tp.include?(1) && tp.include?(2) && tp.include?(3) && tp.include?(4) && tp.include?(5) ||
+      tp.include?(2) && tp.include?(3) && tp.include?(4) && tp.include?(5) && tp.include?(6) ||
+      tp.include?(3) && tp.include?(4) && tp.include?(5) && tp.include?(6) && tp.include?(7) ||
+      tp.include?(4) && tp.include?(5) && tp.include?(6) && tp.include?(7) && tp.include?(8) ||
+      tp.include?(5) && tp.include?(6) && tp.include?(7) && tp.include?(8) && tp.include?(9) ||
+      tp.include?(6) && tp.include?(7) && tp.include?(8) && tp.include?(9) && tp.include?(10) ||
+      tp.include?(7) && tp.include?(8) && tp.include?(9) && tp.include?(10) && tp.include?(11) ||
+      tp.include?(8) && tp.include?(9) && tp.include?(10) && tp.include?(11) && tp.include?(12) ||
+      tp.include?(9) && tp.include?(10) && tp.include?(11) && tp.include?(12) && tp.include?(13)
+      )
+      has = true
+    end
+    puts "result "+has.to_s
     return has
   end
   
