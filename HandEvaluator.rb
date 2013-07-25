@@ -4,11 +4,11 @@ class HandEvaluator
   
   COMBO_VALUE_MULTIPLIER = 75
   PAIR_VALUE = 2000
-  THREE_OF_A_KIND_VALUE = 6000
+  THREE_OF_A_KIND_VALUE = 3000
   STRAIGHT_VALUE = 8000
   FLUSH_VALUE = 10000
   #Full house value = three of a kind value + pair value + modifier
-  FULL_HOUSE_MODIFIER = 3000
+  FULL_HOUSE_MODIFIER = 2000
   FOUR_OF_A_KIND_VALUE = 15000
   STRAIGHT_FLUSH_VALUE = 30000
   ROYAL_FLUSH_VALUE = 50000
@@ -29,7 +29,6 @@ class HandEvaluator
     elsif(hand_has_four_of_a_kind?(hand))
       reorganize_hand(hand)
     elsif(hand_has_full_house?(hand))
-      reorganize_hand(hand)
     elsif(hand_has_flush?(hand))
       reorganize_hand(hand)
     elsif(hand_has_straight?(hand))
@@ -85,8 +84,29 @@ class HandEvaluator
   end
   
   def hand_has_full_house?(hand)
-    #has = hand_has_three_of_a_kind? hand && hand_has_pairs?(@new_hand)
-    return false
+    has = hand_has_three_of_a_kind? hand 
+    if(has)
+      three_of_a_kind = Array.new
+      three_of_a_kind << @temp_array[0]
+      three_of_a_kind << @temp_array[1]
+      three_of_a_kind << @temp_array[2]
+      
+      print three_of_a_kind.to_s
+      has = hand_has_pairs?(@new_hand - @temp_array)
+      if(has)
+        reorganize_hand @new_hand
+        print three_of_a_kind.to_s
+        @new_hand = three_of_a_kind + @new_hand
+        @temp_array = three_of_a_kind + @temp_array
+        @new_hand = @temp_array + (@new_hand - @temp_array)
+        combo_value = 0
+        for i in 0...5
+          combo_value += hand[i].get_value
+        end
+        @hand_value += FULL_HOUSE_MODIFIER + combo_value
+      end 
+    end
+    return has
   end
   
   def hand_has_flush?(hand)
@@ -94,11 +114,11 @@ class HandEvaluator
   end
   
   def hand_has_straight?(hand)
-    has=false
-    @temp_numbers = Array.new
-    hand.each{|x|@temp_numbers.push(x.get_value)}
-    @temp_numbers.each{|x|print x}
-    return has
+    #has=false
+    #@temp_numbers = Array.new
+    #hand.each{|x|@temp_numbers.push(x.get_value)}
+    #@temp_numbers.each{|x|print x}
+    return false
   end
   
   def hand_has_three_of_a_kind?(hand)
@@ -112,7 +132,7 @@ class HandEvaluator
     current = hand[0]
     match_counter = 1
     for i in 1...hand.length
-      if(current.get_value == hand[i].get_value)
+      if(current.get_value == hand[i].get_value && match_counter < 3)
         #puts "Match! " + current.inspect + " " + hand[i].inspect
         match_counter += 1
         if(match_counter == 3)
