@@ -49,7 +49,13 @@ class HandEvaluator
   end
   
   def hand_has_straight_flush?(hand)
-    return false
+    has = false
+    hands = hand.combination(5)
+    hands.each{|x| if hand_has_straight?(x) && hand_has_flush?(x)
+      has = true
+    end
+      }
+    return has
   end
   
   def hand_has_four_of_a_kind?(hand)
@@ -61,7 +67,30 @@ class HandEvaluator
   end
   
   def hand_has_flush?(hand)
-    return false
+    has = false
+    tp = Array.new
+    hand.each{|x| tp.push(x.get_suit_name)}
+    clubs = 0;hearts=0;spades=0;diamonds=0;
+    tp.each{|x| if x == 'c'
+      clubs = clubs+1
+      elsif x == 'h'  
+        hearts = hearts+1
+      elsif x == 's'  
+        spades = spades+1
+      elsif x == 'd'  
+        diamonds = diamonds+1
+      end
+      }
+      if clubs > 4 
+        has = true
+      elsif hearts > 4
+        has = true
+      elsif spades > 4
+        has = true
+      elsif diamonds > 4
+        has = true
+      end
+    return has
   end
   
   def hand_has_straight?(hand)
@@ -70,7 +99,6 @@ class HandEvaluator
     hand.each{|x|tp.push(x.get_value)}
     tp.sort!
     tp.uniq!
-    puts tp.inspect
     
        
     if(tp.include?(13) && tp.include?(1) && tp.include?(2) && tp.include?(3) && tp.include?(4) ||
@@ -86,7 +114,6 @@ class HandEvaluator
       )
       has = true
     end
-    puts "result "+has.to_s
     return has
   end
   
