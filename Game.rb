@@ -109,10 +109,10 @@ class Game
       @players[i] << @deck.draw
     end
     
-    @community_cards << Card.new(3, 0)
-    @community_cards << Card.new(3, 1)
-    @community_cards << Card.new(1, 2)
-    @community_cards << Card.new(0, 2)
-    @community_cards << Card.new(1, 3)
+    @community_cards << Card.new(12, 0)
+    @community_cards << Card.new(11, 0)
+    @community_cards << Card.new(10, 0)
+    @community_cards << Card.new(9, 0)
+    @community_cards << Card.new(8, 0)
   end
 end

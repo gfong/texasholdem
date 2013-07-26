@@ -45,7 +45,17 @@ class HandEvaluator
   end
   
   def hand_has_royal_flush?(hand)
-    return false
+    has = false
+    hands = hand.combination(5)
+    hands.each{|x| 
+      nums = Array.new
+      x.each{|y| nums.push(y.get_value)}
+      if hand_has_flush?(x) && nums.include?(12) && nums.include?(11) && nums.include?(10) && nums.include?(9) && nums.include?(8)
+        has = true
+      end
+      }  
+      puts 'result '+has.to_s
+    return has
   end
   
   def hand_has_straight_flush?(hand)
