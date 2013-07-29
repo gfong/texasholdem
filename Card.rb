@@ -6,7 +6,7 @@ class Card
   end
   
   def get_value
-    converted_value = @value == 0 ? 14 : @value
+    converted_value = @value == 0 ? 13 : @value
     return converted_value
   end
   
@@ -14,9 +14,23 @@ class Card
     return @suit
   end
   
+  def get_suit_name
+    suitChar = @suit
+    if @suit == 0
+      suitChar = "d"
+    elsif @suit == 1
+      suitChar = "c"
+    elsif @suit == 2
+      suitChar = "h"
+    elsif @suit == 3
+      suitChar = "s"
+    end
+    return suitChar
+  end
+  
   def get_compare_value
-    converted_value = @value == 0 ? 14 : @value
-    return ((converted_value + 1) * 10) + (@suit + 1)
+    converted_value = @value == 0 ? 13 : @value
+    return ((converted_value) * 10) + (@suit + 1)
   end
   
   def inspect
