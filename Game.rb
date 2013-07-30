@@ -101,6 +101,22 @@ class Game
   end
   
   def setup_custom_game
+    card_1 = Card.new(0, 0)
+    card_2 = Card.new(1, 0)
+    card_3 = Card.new(3, 3)
+    card_4 = Card.new(2, 2)
+    card_5 = Card.new(4, 1)
+    @community_cards << card_1
+    @deck.remove(card_1)
+    @community_cards << card_2
+    @deck.remove(card_2)
+    @community_cards << card_3
+    @deck.remove(card_3)
+    @community_cards << card_4
+    @deck.remove(card_4)
+    @community_cards << card_5
+    @deck.remove(card_5)
+    
     for i in 0...@player_count
       @players[i] = Array.new
       @players[i] << @deck.draw
@@ -109,11 +125,5 @@ class Game
     for i in 0...@player_count
       @players[i] << @deck.draw
     end
-    
-    @community_cards << Card.new(3, 0)
-    @community_cards << Card.new(3, 1)
-    @community_cards << Card.new(3, 2)
-    @community_cards << Card.new(3, 3)
-    @community_cards << Card.new(1, 3)
   end
 end

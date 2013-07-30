@@ -24,8 +24,10 @@ class HandEvaluator
     @hand_value = 0
     if(hand_has_royal_flush?(hand))
       reorganize_hand(hand)
+      @hand_value = ROYAL_FLUSH_VALUE + @new_hand[0].get_suit
     elsif(hand_has_straight_flush?(hand))
-      reorganize_hand(hand)
+      reorganize_hand(hand)      
+      @hand_value = STRAIGHT_FLUSH_VALUE + (@new_hand[0].get_index + @new_hand[0].get_suit) + (@new_hand[1].get_index)
     elsif(hand_has_four_of_a_kind?(hand))
       reorganize_hand(hand)
     elsif(hand_has_full_house?(hand))
@@ -33,6 +35,7 @@ class HandEvaluator
       reorganize_hand(hand)
     elsif(hand_has_straight?(hand))
       reorganize_hand(hand)
+      @hand_value += STRAIGHT_VALUE + (@new_hand[0].get_index + @new_hand[0].get_suit) + (@new_hand[1].get_index)
     elsif(hand_has_three_of_a_kind?(hand))
       reorganize_hand(hand)
     elsif(hand_has_pairs?(hand))
@@ -43,17 +46,34 @@ class HandEvaluator
     return [@new_hand, @hand_value]
   end
   
+  #---Check for royal flush---
   def hand_has_royal_flush?(hand)
-    return false
+    has = false
+    hands = hand.combination(5)
+    hands.each{|x| 
+      nums = Array.new
+      x.each{|y| nums.push(y.get_value)}
+      if (hand_has_flush?(x) && nums.include?(13) && nums.include?(12) && nums.include?(11) && nums.include?(10) && nums.include?(9))
+        has = true
+        break
+      end
+    }  
+    return has
   end
   
   def hand_has_straight_flush?(hand)
     has = false
-    puts "Checking straight flush"
-    if hand_has_straight?(hand) && hand_has_flush?(hand)
-      has = true
-      @hand_value += STRAIGHT_FLUSH_VALUE + COMBO_VALUE_MULTIPLIER * (hand[0].get_value)
-    end
+    @temp_array = Array.new
+    @hand_value = 0
+    
+    hands = hand.combination(5)
+    hands.each{|x| 
+      if (hand_has_flush?(x) && hand_has_straight?(x))
+        has = true
+        @temp_array = x
+        break
+      end
+    }  
     return has
   end
   
@@ -157,47 +177,39 @@ class HandEvaluator
     return has
   end
   
+  #---Check for straight---
   def hand_has_straight?(hand)
-    puts "Checking straight"
     @temp_array = Array.new
     @hand_value = 0
-    has=false
-    tp = Array.new
-    hand.each{|x|tp.push(x.get_value)}
-    tp.sort!
-    tp.uniq!
+    has = false
+    
+    hands = hand.combination(5)
+    hands.each{|x| 
+      tp = Array.new
+      x.each{|y|tp.push(y.get_value)}
+      tp.sort!
+      tp.uniq!
        
-    if(tp.include?(13) && tp.include?(1) && tp.include?(2) && tp.include?(3) && tp.include?(4) ||
-      tp.include?(1) && tp.include?(2) && tp.include?(3) && tp.include?(4) && tp.include?(5) ||
-      tp.include?(2) && tp.include?(3) && tp.include?(4) && tp.include?(5) && tp.include?(6) ||
-      tp.include?(3) && tp.include?(4) && tp.include?(5) && tp.include?(6) && tp.include?(7) ||
-      tp.include?(4) && tp.include?(5) && tp.include?(6) && tp.include?(7) && tp.include?(8) ||
-      tp.include?(5) && tp.include?(6) && tp.include?(7) && tp.include?(8) && tp.include?(9) ||
-      tp.include?(6) && tp.include?(7) && tp.include?(8) && tp.include?(9) && tp.include?(10) ||
-      tp.include?(7) && tp.include?(8) && tp.include?(9) && tp.include?(10) && tp.include?(11) ||
-      tp.include?(8) && tp.include?(9) && tp.include?(10) && tp.include?(11) && tp.include?(12) ||
-      tp.include?(9) && tp.include?(10) && tp.include?(11) && tp.include?(12) && tp.include?(13)
-      )
-      has = true
-      @hand_value += STRAIGHT_VALUE + hand[0].get_value
-      
-      hand = (hand.sort_by {|c| c.get_compare_value}).reverse
-      for i in 0...(hand.length - 1)
-        first_value = hand[i].get_value
-        second_value = hand[i+1].get_value
-        if((first_value - second_value) == 1)
-          puts "adding: " + hand[i].inspect
-          @temp_array << hand[i]
-        end 
+      if(tp.include?(13) && tp.include?(1) && tp.include?(2) && tp.include?(3) && tp.include?(4) ||
+        tp.include?(1) && tp.include?(2) && tp.include?(3) && tp.include?(4) && tp.include?(5) ||
+        tp.include?(2) && tp.include?(3) && tp.include?(4) && tp.include?(5) && tp.include?(6) ||
+        tp.include?(3) && tp.include?(4) && tp.include?(5) && tp.include?(6) && tp.include?(7) ||
+        tp.include?(4) && tp.include?(5) && tp.include?(6) && tp.include?(7) && tp.include?(8) ||
+        tp.include?(5) && tp.include?(6) && tp.include?(7) && tp.include?(8) && tp.include?(9) ||
+        tp.include?(6) && tp.include?(7) && tp.include?(8) && tp.include?(9) && tp.include?(10) ||
+        tp.include?(7) && tp.include?(8) && tp.include?(9) && tp.include?(10) && tp.include?(11) ||
+        tp.include?(8) && tp.include?(9) && tp.include?(10) && tp.include?(11) && tp.include?(12) ||
+        tp.include?(9) && tp.include?(10) && tp.include?(11) && tp.include?(12) && tp.include?(13)
+        )
+        has = true
+        @temp_array = (x.sort_by {|c| c.get_index})
+        break
       end
-      if(@temp_array.length < 5)
-        puts "adding final: " + hand[hand.length - 1].inspect
-        @temp_array << hand[hand.length - 1]
-      end
-    end
+    }  
     return has
   end
   
+  #---Check for three of a kind---
   def hand_has_three_of_a_kind?(hand)
     has = false
     

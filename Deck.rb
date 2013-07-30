@@ -22,4 +22,8 @@ class Deck
   def draw
     return @cards.pop
   end
+  
+  def remove(card)
+    @cards.delete card
+  end
 end

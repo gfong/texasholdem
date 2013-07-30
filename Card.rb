@@ -10,6 +10,10 @@ class Card
     return converted_value
   end
   
+  def get_index
+    return @value
+  end
+  
   def get_suit
     return @suit
   end
