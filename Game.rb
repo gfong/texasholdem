@@ -51,7 +51,7 @@ class Game
     @players.each do |p|
       hand = p + @community_cards
       hand_and_value = @hand_evaluator.evaluate_hand(hand)
-      @player_hands_and_values[hand_and_value[0]] = hand_and_value[1]
+      @player_hands_and_values[hand_and_value[0]] = [hand_and_value[1], hand_and_value[2]]
       hand_and_value[0].each do |c|
         print c.inspect + ", "
       end
@@ -67,7 +67,7 @@ class Game
       k.each do |c|
         print c.inspect + ", "
       end
-      print "\t value: " + v.to_s + "\n"
+      print "\t value: " + v[0].to_s + "\t" + v[1].to_s + "\n"
     end
   end
   

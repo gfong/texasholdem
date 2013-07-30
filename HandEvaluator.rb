@@ -17,6 +17,7 @@ class HandEvaluator
     @new_hand = nil
     @hand_value = 0
     @temp_array = Array.new
+    @hand_type = "High Card"
   end
  
   def evaluate_hand(hand)
@@ -25,25 +26,37 @@ class HandEvaluator
     if(hand_has_royal_flush?(hand))
       reorganize_hand(hand)
       @hand_value = ROYAL_FLUSH_VALUE + @new_hand[0].get_suit
+      @hand_type = "Royal Flush"
     elsif(hand_has_straight_flush?(hand))
       reorganize_hand(hand)      
       @hand_value = STRAIGHT_FLUSH_VALUE + (@new_hand[0].get_index + @new_hand[0].get_suit) + (@new_hand[1].get_index)
+      @hand_type = "Straight Flush"
     elsif(hand_has_four_of_a_kind?(hand))
       reorganize_hand(hand)
+      @hand_type = "Four of a Kind"
     elsif(hand_has_full_house?(hand))
+      @hand_type = "Full House"
     elsif(hand_has_flush?(hand))
       reorganize_hand(hand)
+      @hand_type = "Flush"
     elsif(hand_has_straight?(hand))
       reorganize_hand(hand)
       @hand_value += STRAIGHT_VALUE + (@new_hand[0].get_index + @new_hand[0].get_suit) + (@new_hand[1].get_index)
+      @hand_type = "Straight"
     elsif(hand_has_three_of_a_kind?(hand))
       reorganize_hand(hand)
+      @hand_type = "Three of a Kind"
     elsif(hand_has_pairs?(hand))
       reorganize_hand(hand)
+      if(@temp_array.length == 2)
+        @hand_type = "Pair"
+      else
+        @hand_type = "Two Pair"
+      end
     else
       evaluate_high_card(hand)
     end
-    return [@new_hand, @hand_value]
+    return [@new_hand, @hand_value, @hand_type]
   end
   
   #---Check for royal flush---
@@ -61,6 +74,7 @@ class HandEvaluator
     return has
   end
   
+  #Check if hand has straight flush
   def hand_has_straight_flush?(hand)
     has = false
     @temp_array = Array.new
@@ -77,6 +91,7 @@ class HandEvaluator
     return has
   end
   
+  #Check if hand has four of a kind
   def hand_has_four_of_a_kind?(hand)
     has = false
     
@@ -89,7 +104,6 @@ class HandEvaluator
     match_counter = 1
     for i in 1...hand.length
       if(current.get_value == hand[i].get_value)
-        #puts "Match! " + current.inspect + " " + hand[i].inspect
         match_counter += 1
         if(match_counter == 4)
           has = true
@@ -97,7 +111,6 @@ class HandEvaluator
           @temp_array << hand[i-1]
           @temp_array << hand[i-2]
           @temp_array << hand[i-3]
-          #print "Three of a kind! " + @temp_array.to_s
           @hand_value += FOUR_OF_A_KIND_VALUE + COMBO_VALUE_MULTIPLIER * (hand[i].get_value)
           break
         end
@@ -109,6 +122,7 @@ class HandEvaluator
     return has
   end
   
+  #Check if hand has full house
   def hand_has_full_house?(hand)
     @temp_array = Array.new
     has = hand_has_three_of_a_kind? hand 
@@ -118,11 +132,9 @@ class HandEvaluator
       three_of_a_kind << @temp_array[1]
       three_of_a_kind << @temp_array[2]
       
-      #print three_of_a_kind.to_s
       has = hand_has_pairs?(@new_hand - @temp_array)
       if(has)
         reorganize_hand @new_hand
-        #print three_of_a_kind.to_s
         @new_hand = three_of_a_kind + @new_hand
         @temp_array = three_of_a_kind + @temp_array
         @new_hand = @temp_array + (@new_hand - @temp_array)
@@ -222,14 +234,12 @@ class HandEvaluator
     match_counter = 1
     for i in 1...hand.length
       if(current.get_value == hand[i].get_value && match_counter < 3)
-        #puts "Match! " + current.inspect + " " + hand[i].inspect
         match_counter += 1
         if(match_counter == 3)
           has = true
           @temp_array << hand[i]
           @temp_array << hand[i-1]
           @temp_array << hand[i-2]
-          #print "Three of a kind! " + @temp_array.to_s
           @hand_value += THREE_OF_A_KIND_VALUE + COMBO_VALUE_MULTIPLIER * (hand[i].get_value)
           break
         end
@@ -250,13 +260,15 @@ class HandEvaluator
     #Get all pairs from hand
     for i in 0...(hand.length - 1)
       for j in (i + 1)...hand.length
-        if(@temp_array.length < 4 && 
-            (!@temp_array.include? hand[i]) && (!@temp_array.include? hand[j]) && 
+        if((!@temp_array.include? hand[i]) && 
+            (!@temp_array.include? hand[j]) && 
             hand[i].get_value == hand[j].get_value)
           has = true
           @temp_array << hand[i]
           @temp_array << hand[j]
-          @hand_value += PAIR_VALUE + COMBO_VALUE_MULTIPLIER * (hand[i].get_value)
+          if @temp_array.length <= 4 
+            @hand_value += PAIR_VALUE + COMBO_VALUE_MULTIPLIER * (hand[i].get_value)
+          end
         end 
       end
     end
