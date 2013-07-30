@@ -23,6 +23,7 @@ class HandEvaluator
   def evaluate_hand(hand)
     @new_hand = hand
     @hand_value = 0
+    @hand_type = "High Card"
     if(hand_has_royal_flush?(hand))
       reorganize_hand(hand)
       @hand_value = ROYAL_FLUSH_VALUE + @new_hand[0].get_suit
